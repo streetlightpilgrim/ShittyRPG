@@ -1,6 +1,6 @@
 Priority 1: Battles can start and end as intended (Minimum: ARENA GAME)
-1.1 Player minimum information for battle
-1.2 Turn Start Calculation
+1.1 Player minimum information for battle #DONE
+1.2 Turn Start Calculation #DONE
 1.3 Defend option
 1.4 Skills option
 1.5 Inventory option
@@ -12,3 +12,4 @@ Priority 1: Battles can start and end as intended (Minimum: ARENA GAME)
 1.11 Post-Battle Lose
 1.12 Reward (loot, exp, etc) distribution
 1.13 Pretty interface
+1.14 port fight to its own module #DONE

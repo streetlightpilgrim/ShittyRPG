@@ -1,0 +1,2 @@
+id,name,exp,level,gold,maxhealth,maxmana,attack,defense,speed,fire_enhance,water_enhance,air_enhance,earth_enhance,light_enhance,dark_enhance,fire_resist,water_resist,air_resist,earth_resist,light_resist,dark_resist,skill,occ_achemy,occ_barter,occ_dungeon,rep_association,rep_guild,rep_community
+1,Jason,0,1,0,10,10,5,5,5,50,0,0,0,0,0,0,0,0,0,0,0,,0,0,0,0,0,0
