@@ -121,7 +121,8 @@ def playerattack(player, monster):
     fightcheck(player, monster)
 
 def playerdefend():
-    playerdefendbonus = True
+    playerdefendcounter = 1
+
 def skill():
     pass
 def inventory():

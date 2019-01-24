@@ -2,7 +2,7 @@ import os
 import sys
 import pandas as pd
 import csv
-from battle import prefight
+import test
 
 PlayerDatabase = 'playerinfo.csv' #playerinfo is the database for player stats
 BestiaryDatabase = 'bestiary.csv' #bestiary is the database for monster information.
@@ -54,4 +54,6 @@ Welcome to my sh1tty RPG
 print("What is your name?")
 name = input(">>>> ")
 PlayerIG = Player(name)
-prefight(PlayerIG, Monster('Goblin Soldier'))
+#prefight(PlayerIG, Monster('Goblin Soldier'))
+test.playerdefend(2, True)
+#print(test.movelist['defend'])
