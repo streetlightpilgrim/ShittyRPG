@@ -1,23 +1,21 @@
-import os
-import sys
 import pandas as pd
-import csv
 from battle import Combat
 
 PlayerDatabase = 'playerinfo.csv' #playerinfo is the database for player stats
-BestiaryDatabase = 'bestiary.csv' #bestiary is the database for monster information.
+BestiaryDatabase = 'bestiary.csv' #bestiary is the database for monster information
+SkillDatabase = 'skill.csv' #skill is the database for skill information
 outputleft = "***          "
 outputright = "          ***"
 user_input = ">>>"
 
 class Player:
     def __init__(self, name):
-        self.id = 1 #Placeholder until save and load function.
-        #establish connection with player database.
+        self.id = 1 #placeholder until save and load function
+        #establish connection with player database
         self.playerfile = pd.read_csv(PlayerDatabase, sep = ',', header = 0, encoding = 'utf-8')
-        #Find match for correct player ID.
+        #find match for correct player ID.
         self.match = self.playerfile['id'] == self.id
-        #Establish key values by pulling from database.
+        #establish key values by pulling from database.
         self.name = self.playerfile['name'][self.match].values[0]
         print(self.name)
 
@@ -54,4 +52,4 @@ Welcome to my sh1tty RPG
 print("What is your name?")
 name = input(">>>> ")
 PlayerIG = Player(name)
-Combat(PlayerIG, Monster('Goblin Soldier'))
+Combat(PlayerIG, Monster('Goblin Soldier'), SkillDatabase)
