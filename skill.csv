@@ -1,0 +1,2 @@
+id,name,mana_cost,expiry_counter,buff,stackable,playerturnactivation,monsterturnactivation,endturnactivation,player_usable
+1,Attack,0,0,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE
