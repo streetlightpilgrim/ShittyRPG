@@ -1,3 +1,3 @@
 id,name,maxhealth,maxmana,attack,defense,speed,fire_enhance,water_enhance,air_enhance,earth_enhance,light_enhance,dark_enhance,fire_resist,water_resist,air_resist,earth_resist,light_resist,dark_resist,skill,exp,gold,loot,taunt,flavour_text,discovered
-1,Goblin Soldier,5,0,2,2,3,0,0,0,0,0,0,25,0,0,0,0,0,,5,5,,"One of of us is going to lose, and that'll be me.....that grinds you to dust!",He never chose this life,FALSE
+1,Goblin Soldier,5,0,2,2,0,0,0,0,0,0,0,25,0,0,0,0,0,,5,5,,"One of of us is going to lose, and that'll be me.....that grinds you to dust!",He never chose this life,FALSE
 2,Goblin Lord,10,10,10,10,10,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,,,,
