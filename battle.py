@@ -1,11 +1,13 @@
+from database import Database
+db = Database()
 import effect
 
 class Combat:
-    def __init__(self, player, monster, SkillDatabase):
+    def __init__(self, player, monster):
+        #transfer Player and Monster class objects to Combat class so it can be referred to dynamically
         self.player = player
         self.monster = monster
-        self.SkillDatabase = SkillDatabase
-        #Load player base information.
+        #Load player base information
         self.player.maxhealth = self.player.playerfile['maxhealth'][self.player.match].values[0]
         self.player.maxmana = self.player.playerfile['maxmana'][self.player.match].values[0]
         self.player.attack = self.player.playerfile['attack'][self.player.match].values[0]
@@ -24,7 +26,7 @@ class Combat:
         self.player.light_resist = self.player.playerfile['light_resist'][self.player.match].values[0]
         self.player.dark_resist = self.player.playerfile['dark_resist'][self.player.match].values[0]
         self.player.skill = self.player.playerfile['skill'][self.player.match].values[0]
-        #load monster base information.
+        #load monster base information
         self.monster.maxhealth = self.monster.monsterfile['maxhealth'][self.monster.match].values[0]
         self.monster.maxmana = self.monster.monsterfile['maxmana'][self.monster.match].values[0]
         self.monster.attack = self.monster.monsterfile['attack'][self.monster.match].values[0]
@@ -45,7 +47,7 @@ class Combat:
         self.monster.skill = self.monster.monsterfile['skill'][self.monster.match].values[0]
         self.monster.taunt = self.monster.monsterfile['taunt'][self.monster.match].values[0]
         self.monster.flavour_text = self.monster.monsterfile['flavour_text'][self.monster.match].values[0]
-        #Load player battle exclusive information.
+        #Load player battle exclusive information
         self.player.health = self.player.maxhealth
         self.player.mana = self.player.maxmana
         self.player.fire_effective = self.player.fire_enhance - self.monster.fire_resist
@@ -59,7 +61,7 @@ class Combat:
                                 self.player.air_effective + self.player.earth_effective + \
                                 self.player.light_effective + self.player.dark_effective
         self.player.turncounter = 0
-        #Load monster battle exclusive information.
+        #Load monster battle exclusive information
         self.monster.health = self.monster.maxhealth
         self.monster.mana = self.monster.maxmana
         self.monster.fire_effective = self.monster.fire_enhance - player.fire_resist
@@ -73,36 +75,49 @@ class Combat:
                                 self.monster.air_effective + self.monster.earth_effective + \
                                 self.monster.light_effective + self.monster.dark_effective
         self.monster.turncounter = 0
-
+        #load Battleflow
         self.battleflow = effect.Battleflow()
-
+        #activate prefight phase
         self.prefight()
 
     def prefight(self):
-        #Battle intro message.
+        #battle intro message
         print("{T1} VS {T2}".format(T1 = self.player.name, T2 = self.monster.name))
         print(self.monster.taunt)
-
+        #activate turncount phase
         self.turncount()
 
     def turncount(self):
-        #Calculates using player and monster speed, who will get to 100 first.
+        #calculates using player and monster speed, who will get to 100 first
         while self.monster.turncounter <= 100 and self.player.turncounter <= 100:
             self.player.turncounter += self.player.speed
             self.monster.turncounter += self.monster.speed
-        #Activates player turn and reduce counter (keeps excess)
+        #activates starturn phase and reduce counter (keeps excess)
         if self.player.turncounter >= 100:
             self.player.turncounter -= 100
-            self.playerturn()
-        #Activates monster turn and reduce counter (keeps excess)
+            self.startturn(self.player)
+        #activates starturn phase and reduce counter (keeps excess)
         if self.monster.turncounter >= 100:
             self.monster.turncounter -= 100
+            self.startturn(self.monster)
+
+    def startturn(self, initiator):
+        #check for battle effects on player's turn activation
+        self.battleflow.onstartturn(initiator)
+        #check for battle ending conditions
+        self.battleconclusion = self.endcheck()
+        if self.battleconclusion == 'L':
+            self.postfight('L')
+        elif self.battleconclusion == 'W':
+            self.postfight('W')
+        #begin initiator's turn
+        elif initiator == self.player:
+            self.playerturn()
+        elif initiator == self.monster:
             self.monsterturn()
 
     def playerturn(self):
-
-        self.battleflow.onplayerturn()
-        #Input menu
+        #player battle input menu
         print("(1) Attack")
         print("(2) Defend")
         print("(3) Skills")
@@ -111,16 +126,13 @@ class Combat:
         print("(6) Run")
         print("(7) Help")
         option = input("FIGHT").lower()
-
+        #activate generic attack
         if option == "attack" or option == '1':
-            effect.Attack(self.player, self.monster, self.battleflow, self.SkillDatabase).instant()
-            ##effect.Attack.instant()
-            self.endturn()
-            #value = self.playerattack(player, monster, state)
-            #self.preengage(player, monster, state, value)
+            effect.Attack(self.player, self.monster, self.battleflow).instant()
+        #activate generid defense
         elif option == "defend" or option == '2':
-            pass
-            #self.playerdefend(player, monster, state)
+            effect.Defend(self.player, self.monster, self.battleflow).instant()
+
         elif option == "skills" or option == '3':
             pass
         elif option == "inventory" or option == '4':
@@ -133,18 +145,45 @@ class Combat:
             pass
         else:
             self.playerturn()
+        #check for battle ending conditions
+        self.battleconclusion = self.endcheck()
+        if self.battleconclusion == 'L':
+            self.postfight('L')
+        elif self.battleconclusion == 'W':
+            self.postfight('W')
+        else: #activate endturn phase
+            self.endturn(self.playerturn)
 
-    def endturn(self):
-        self.battleflow.onendturn()
-        self.turncount()
+    def monsterturn(self):
+        #check for battle ending conditions
+        self.endcheck()
+        #activate endturn phase
+        self.endturn(self.monsterturn)
+
+    def endturn(self, initiator):
+        #check for battle effects on end of turn activation
+        self.battleflow.onendturn(initiator)
+        #check for battle ending conditions
+        self.battleconclusion = self.endcheck()
+        if self.battleconclusion == 'L':
+            self.postfight('L')
+        elif self.battleconclusion == 'W':
+            self.postfight('W')
+        else: #loop back and activate turncount phase
+            self.turncount()
 
     def endcheck(self):
         if self.player.health <= 0:
             print("You Lose")
+            return 'L'
             ##gameover
-        if self.self.monster.health <= 0:
+        elif self.monster.health <= 0:
             print("You Win")
-            postfight()
+            return 'W'
 
-    def postfight(self):
-        print("battle over")
+    def postfight(self, result):
+        if result == 'L':
+            pass
+        if result == 'W':
+            pass
+            print("battle over")
