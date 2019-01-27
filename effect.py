@@ -1,102 +1,118 @@
+from database import Database
+db = Database()
 import pandas as pd
 
-class Effect:
-    def __init__(self, name, caster, target, battleflow):
+class Effect: #class to interact with effect of skills, attributes and items
+    def __init__(self, name, initiator, bystander, battleflow):
+        #transfer Player, Monster and Battleflow class objects to Effect class so it can be referred to dynamically
         self.name = name
-        self.caster = caster
-        self.target = target
+        self.initiator = initiator
+        self.bystander = bystander
         self.battleflow = battleflow
 
     def instant(self):
+        #instants are activations that happen immediately after casting
         pass
 
     def persist(self):
+        #persists are activations that happen in a different phase after casting
         pass
 
     def deactivation(self):
+        #deactivations are activations that happen before the effect class object is deleted from Battleflow
         pass
 
-class Skill(Effect):
-    def __init__(self, name, caster, target, battleflow, SkillDatabase):
-        self.skillfile = pd.read_csv(SkillDatabase, sep = ',', header = 0, encoding = 'utf-8')
+class Skill(Effect): #class to interact with skill objects
+    def __init__(self, name, initiator, bystander, battleflow):
+        super().__init__(name, initiator, bystander, battleflow)
+        #establish connection with skill database
+        self.skillfile = pd.read_csv(db.SkillDatabase, sep = ',', header = 0, encoding = 'utf-8')
+        #returns True for rows that fulfill the criterias and False for others. There should always be one true since monster name is unique
         self.match = self.skillfile['name'] == name
-
-        self.expiry_counter = self.skillfile['expiry_counter'][self.match].values[0]
+        #load skill information
+        if self.skillfile['target'][self.match].values[0] == 'bystander':
+            self.target = self.bystander
+        elif self.skillfile['target'][self.match].values[0] == 'initiator':
+            self.target = self.initiator
+        self.expirycounter = self.skillfile['expirycounter'][self.match].values[0]
         self.buff = self.skillfile['buff'][self.match].values[0]
         self.stackable = self.skillfile['stackable'][self.match].values[0]
-        self.playerturnactivation = self.skillfile['playerturnactivation'][self.match].values[0]
-        self.monsterturnactivation = self.skillfile['monsterturnactivation'][self.match].values[0]
+        self.startturnactivation = self.skillfile['startturnactivation'][self.match].values[0]
         self.endturnactivation = self.skillfile['endturnactivation'][self.match].values[0]
 
-        super().__init__(name, caster, target, battleflow)
-
     def instant(self):
-        super().instant(self)
+        super().instant()
 
     def persist(self):
-        super().persist(self)
+        super().persist()
 
     def deactivation(self):
-        super().deactivation(self)
+        super().deactivation()
 
 class Attack(Skill):
-    def __init__(self, caster, target, battleflow, SkillDatabase):
+    def __init__(self, initiator, bystander, battleflow):
         self.name = 'Attack'
-
-        super().__init__(self.name, caster, target, battleflow, SkillDatabase)
-
-        print(self.buff, self.name, self.endturnactivation, self.expiry_counter)
-
-        self.skillvalues = [self, self.name, self.expiry_counter, self.buff, self.stackable, \
-                    self.playerturnactivation, self.monsterturnactivation, \
-                    self.endturnactivation, self.caster, self.target]
-
-        battleflow.execute(self.skillvalues, battleflow)
+        super().__init__(self.name, initiator, bystander, battleflow)
+        self.battleflow.execute(self)
 
     def instant(self):
-        self.value = self.caster.attack - self.target.defense
-        self.target.health -= self.value
-        print(self.target.health)
+        self.value = self.initiator.attack - self.bystander.defense
+        self.bystander.health -= self.value
+        print(self.initiator.health, self.bystander.health)
 
     def persist(self):
-        print("Hellow")
+        print(self.initiator.health, self.bystander.health)
 
     def deactivation(self):
-        pass
+        super().deactivation()
+
+class Defend(Skill):
+    def __init__(self, initiator, bystander, battleflow):
+        self.name = 'Defend'
+        super().__init__(self.name, initiator, bystander, battleflow)
+        self.battleflow.execute(self)
+
+    def instant(self):
+        self.value = self.initiator.defense * 1.5
+        self.initiator.defense += self.value
+        print(self.initiator.defense)
+
+    def persist(self):
+        super().persist()
+
+    def deactivation(self):
+        self.initiator.defense -= self.value
+        print(self.initiator.defense)
 
 class Battleflow:
     def __init__(self):
+        #list to contain executions from skills, attributes and items
         self.executions = []
 
-        self.classobject = 'classobject'
-        self.name = 'name'
-        self.expiry_counter = 'expiry_counter'
-        self.buff = 'buff'
-        self.stackable = 'stackable'
-        self.playerturnactivation = 'playerturnactivation'
-        self.monsterturnactivation = 'monsterturnactivation'
-        self.endturnactivation = 'endturnactivation'
-        self.caster = 'caster'
-        self.target = 'target'
-        self.skillkeys = [self.classobject, self.name, self.expiry_counter, self.buff, self.stackable, \
-                    self.playerturnactivation, self.monsterturnactivation, \
-                    self.endturnactivation, self.caster, self.target]
+    def execute(self, execution):
+        #add executions to list to be tracked
+        self.executions.append(execution)
 
-    def execute(self, skillvalues, battleflow):
-        self.joinkeyandvalues = dict(zip(self.skillkeys, skillvalues))
-        self.executions.append(self.joinkeyandvalues)
-
-    def onplayerturn(self):
+    def onstartturn(self, initiator):
+        #effects activated at start of target turn
         for execution in self.executions:
-            if execution['playerturnactivation'] == True and execution['expiry_counter'] >= 0:
-                execution['classobject'].persist()
+            #activate persist effect if counter > 0
+            if execution.startturnactivation == True and execution.expirycounter > 0 and execution.target == initiator:
+                execution.persist()
+                execution.expirycounter -= 1
+            #delete execution if counter = 0
+            if execution.expirycounter <= 0:
+                execution.deactivation()
+                self.executions.remove(execution)
 
-    def onmonsterturn(self):
+    def onendturn(self, initiator):
+        #effects activated at end of target turn
         for execution in self.executions:
-            if execution['monsterturnactivation'] == True and execution['expiry_counter'] >= 0:
-                execution['classobject'].persist()
-
-    def onendturn(self):
-        for execution in self.executions:
-            if execution['endturnactivation'] == True and execution['expiry_counter'] >= 0:
-                execution['classobject'].persist()
+            #activate persist effect if counter > 0
+            if execution.endturnactivation == True and execution.expirycounter > 0 and execution.target == initiator:
+                execution.persist()
+                execution.expirycounter -= 1
+            #delete execution if counter = 0
+            if execution.expirycounter <= 0:
+                execution.deactivation
+                self.executions.remove(execution)

@@ -1,2 +1,5 @@
-id,name,mana_cost,expiry_counter,buff,stackable,playerturnactivation,monsterturnactivation,endturnactivation,player_usable
-1,Attack,0,0,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE
+id,name,target,manacost,expirycounter,buff,stackable,startturnactivation,endturnactivation,player_usable
+1,Attack,bystander,0,0,FALSE,FALSE,FALSE,FALSE,TRUE
+2,Defend,initiator,0,1,TRUE,FALSE,TRUE,FALSE,TRUE
+3,Fireball,bystander,0,3,FALSE,TRUE,FALSE,TRUE,TRUE
+4,Blessing,initiator,0,2,TRUE,TRUE,TRUE,FALSE,TRUE
