@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "playerinfo_id": 1,
+    "exp": 0,
+    "maxhealth": 10,
+    "maxmana": 10,
+    "attack": 5,
+    "defense": 5,
+    "speed": 5,
+    "fire_enhance": 50,
+    "water_enhance": 0,
+    "air_enhance": 0,
+    "earth_enhance": 0,
+    "light_enhance": 0,
+    "dark_enhance": 0,
+    "fire_resist": 0,
+    "water_resist": 0,
+    "air_resist": 0,
+    "earth_resist": 0,
+    "light_resist": 0,
+    "dark_resist": 0,
+  }
+]

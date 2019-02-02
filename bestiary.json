@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "name": "Goblin Soldier",
+    "Family": "Goblin",
+    "Category": "Common",
+    "maxhealth": 50,
+    "attack": 2,
+    "defense": 2,
+    "speed": 2,
+    "fire_enhance": 0,
+    "water_enhance": 0,
+    "air_enhance": 0,
+    "earth_enhance": 0,
+    "light_enhance": 0,
+    "dark_enhance": 0,
+    "fire_resist": 25,
+    "water_resist": 0,
+    "air_resist": 0,
+    "earth_resist": 0,
+    "light_resist": 0,
+    "dark_resist": 0,
+    "skill": [],
+    "taunt": "One of of us is going to lose, and that'll be me.....that grinds you to dust!",
+    "flavour_text": "He never chose this life",
+  }
+]

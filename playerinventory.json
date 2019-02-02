@@ -1,0 +1,8 @@
+[
+  {
+    "id": 1,
+    "playerinfo_id": 1,
+    "inventory_item": {"1": 5, "2": 10},
+    "equipped_item": [2, 2, 2, 2, 2, 2]
+  }
+]

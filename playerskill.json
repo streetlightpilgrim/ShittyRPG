@@ -1,0 +1,8 @@
+[
+  {
+    "id": 1,
+    "playerinfo_id": 1,
+    "unlocked_skill": [1,2],
+    "equipped_skill": [1,2]
+  }
+]

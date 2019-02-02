@@ -68,10 +68,10 @@ class Combat:
         option = input("FIGHT").lower()
         #activate generic attack
         if option == "attack" or option == '1':
-            effect.Attack(self.player, self.monster, self.battleflow).instant()
+            effect.Skill(1, self.player, self.monster, self.battleflow).instant()
         #activate generid defense
         elif option == "defend" or option == '2':
-            effect.Defend(self.player, self.monster, self.battleflow).instant()
+            effect.Skill(2, self.player, self.monster, self.battleflow).instant()
             #effect.Potion(self.player, self.monster, self.battleflow).instant()
 
         elif option == "skills" or option == '3':
