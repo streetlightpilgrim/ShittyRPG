@@ -49,6 +49,24 @@ class Skill(Effect): #class to interact with skill objects
     def deactivation(self):
         super().deactivation()
 
+class BattleItem(Effect): #class to interact with inventory objects
+    def __init__(self, name, initiator, bystander, battleflow):
+        super().__init__(name, initiator, bystander, battleflow)
+        #establish connection with skill database
+        self.battleitemfile = pd.read_csv(db.BattleItemDatabase, sep = ',', header = 0, encoding = 'utf-8')
+        #returns True for rows that fulfill the criterias and False for others. There should always be one true since monster name is unique
+        self.match = self.battleitemfile['name'] == name
+        #load skill information
+        if self.battleitemfile['target'][self.match].values[0] == 'bystander':
+            self.target = self.bystander
+        elif self.battleitemfile['target'][self.match].values[0] == 'initiator':
+            self.target = self.initiator
+        self.expirycounter = self.battleitemfile['expirycounter'][self.match].values[0]
+        self.buff = self.battleitemfile['buff'][self.match].values[0]
+        self.stackable = self.battleitemfile['stackable'][self.match].values[0]
+        self.startturnactivation = self.battleitemfile['startturnactivation'][self.match].values[0]
+        self.endturnactivation = self.battleitemfile['endturnactivation'][self.match].values[0]
+
 class Attack(Skill):
     def __init__(self, initiator, bystander, battleflow):
         self.name = 'Attack'
@@ -58,10 +76,9 @@ class Attack(Skill):
     def instant(self):
         self.value = self.initiator.attack - self.bystander.defense
         self.bystander.health -= self.value
-        print(self.initiator.health, self.bystander.health)
 
     def persist(self):
-        print(self.initiator.health, self.bystander.health)
+        super.persist()
 
     def deactivation(self):
         super().deactivation()
@@ -75,16 +92,14 @@ class Defend(Skill):
     def instant(self):
         self.value = self.initiator.defense * 1.5
         self.initiator.defense += self.value
-        print(self.initiator.defense)
 
     def persist(self):
         super().persist()
 
     def deactivation(self):
         self.initiator.defense -= self.value
-        print(self.initiator.defense)
 
-class Battleflow:
+class Battleflow: #class to handle effect activations
     def __init__(self):
         #list to contain executions from skills, attributes and items
         self.executions = []

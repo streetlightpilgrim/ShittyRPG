@@ -1,0 +1,2 @@
+id,item_id,target,expirycounter,buff,stackable,startturnactivation,endturnactivation,player_usable
+1,1,initiator,0,TRUE,FALSE,FALSE,FALSE,TRUE
