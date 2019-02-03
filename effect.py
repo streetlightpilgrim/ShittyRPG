@@ -1,6 +1,5 @@
 from database import Database
 db = Database()
-import pandas as pd
 
 class Effect: #class to interact with effect of skills, attributes and items
     def __init__(self, id, initiator, bystander, battleflow):
@@ -12,35 +11,33 @@ class Effect: #class to interact with effect of skills, attributes and items
 
     def instant(self):
         #instants are activations that happen immediately after casting
-        exec(self.skillfile['instant'][self.match].values[0])
+        exec(db.SkillDatabase['instant'][self.match].values[0])
 
     def persist(self):
         #persists are activations that happen in a different phase after casting
-        exec(self.skillfile['persist'][self.match].values[0])
+        exec(db.SkillDatabase['persist'][self.match].values[0])
 
     def deactivation(self):
         #deactivations are activations that happen before the effect class object is deleted from Battleflow
-        exec(self.skillfile['deactivation'][self.match].values[0])
+        exec(db.SkillDatabase['deactivation'][self.match].values[0])
 
 class Skill(Effect): #class to interact with skill objects
     def __init__(self, id, initiator, bystander, battleflow):
         super().__init__(id, initiator, bystander, battleflow)
-        #establish connection with skill database
-        self.skillfile = pd.read_json(db.SkillDatabase, orient = 'records', encoding = 'utf-8')
         #returns True for rows that fulfill the criterias and False for others
-        self.match = self.skillfile['id'] == self.id
-        self.name = self.skillfile['name'] == self.id
+        self.match = db.SkillDatabase['id'] == self.id
+        self.name = db.SkillDatabase['name'] == self.id
         #load skill information
-        if self.skillfile['target'][self.match].values[0] == 'bystander':
+        if db.SkillDatabase['target'][self.match].values[0] == 'bystander':
             self.target = self.bystander
-        elif self.skillfile['target'][self.match].values[0] == 'initiator':
+        elif db.SkillDatabase['target'][self.match].values[0] == 'initiator':
             self.target = self.initiator
         print(self.target.name)
-        self.expirycounter = int(self.skillfile['expirycounter'][self.match].values[0])
-        self.buff = bool(self.skillfile['buff'][self.match].values[0])
-        self.stackable = bool(self.skillfile['stackable'][self.match].values[0])
-        self.startturnactivation = bool(self.skillfile['startturnactivation'][self.match].values[0])
-        self.endturnactivation = bool(self.skillfile['endturnactivation'][self.match].values[0])
+        self.expirycounter = int(db.SkillDatabase['expirycounter'][self.match].values[0])
+        self.buff = bool(db.SkillDatabase['buff'][self.match].values[0])
+        self.stackable = bool(db.SkillDatabase['stackable'][self.match].values[0])
+        self.startturnactivation = bool(db.SkillDatabase['startturnactivation'][self.match].values[0])
+        self.endturnactivation = bool(db.SkillDatabase['endturnactivation'][self.match].values[0])
         self.battleflow.execute(self)
 
     def instant(self):
@@ -55,20 +52,18 @@ class Skill(Effect): #class to interact with skill objects
 class BattleItem(Effect): #class to interact with inventory objects
     def __init__(self, name, initiator, bystander, battleflow):
         super().__init__(name, initiator, bystander, battleflow)
-        #establish connection with skill database
-        self.battleitemfile = pd.read_json(db.BattleItemDatabase, orient = 'records', encoding = 'utf-8')
         #returns True for rows that fulfill the criterias and False for others. There should always be one true since monster name is unique
-        self.match = self.battleitemfile['name'] == name
+        self.match = db.ItemDatabase['name'] == name
         #load skill information
-        if self.battleitemfile['target'][self.match].values[0] == 'bystander':
+        if db.ItemDatabase['target'][self.match].values[0] == 'bystander':
             self.target = self.bystander
-        elif self.battleitemfile['target'][self.match].values[0] == 'initiator':
+        elif db.ItemDatabase['target'][self.match].values[0] == 'initiator':
             self.target = self.initiator
-        self.expirycounter = self.battleitemfile['expirycounter'][self.match].values[0]
-        self.buff = self.battleitemfile['buff'][self.match].values[0]
-        self.stackable = self.battleitemfile['stackable'][self.match].values[0]
-        self.startturnactivation = self.battleitemfile['startturnactivation'][self.match].values[0]
-        self.endturnactivation = self.battleitemfile['endturnactivation'][self.match].values[0]
+        self.expirycounter = db.ItemDatabase['expirycounter'][self.match].values[0]
+        self.buff = db.ItemDatabase['buff'][self.match].values[0]
+        self.stackable = db.ItemDatabase['stackable'][self.match].values[0]
+        self.startturnactivation = db.ItemDatabase['startturnactivation'][self.match].values[0]
+        self.endturnactivation = db.ItemDatabase['endturnactivation'][self.match].values[0]
 
 class Battleflow: #class to handle effect activations
     def __init__(self):

@@ -10,7 +10,13 @@ class Combat:
         #Load player battle exclusive information
         self.player.health = self.player.maxhealth
         self.player.mana = self.player.maxmana
-
+        #Load player skills for quick access
+        self.player.equipped_skill_name = []
+        self.player.equipped_skill_manacost = []
+        for skill in self.player.equipped_skill_id:
+            skillmatch = db.SkillDatabase['id'] == skill
+            self.player.equipped_skill_name.append(db.SkillDatabase['name'][skillmatch].values[0])
+            self.player.equipped_skill_manacost.append(int(db.SkillDatabase['manacost'][skillmatch].values[0]))
         self.player.turncounter = 0
         #Load monster battle exclusive information
         self.monster.health = self.monster.maxhealth
@@ -65,24 +71,25 @@ class Combat:
         print("(5) Inspect")
         print("(6) Run")
         print("(7) Help")
-        option = input("FIGHT").lower()
+        option = input(">>>").title()
         #activate generic attack
-        if option == "attack" or option == '1':
+        if option == "Attack" or option == '1':
             effect.Skill(1, self.player, self.monster, self.battleflow).instant()
         #activate generid defense
-        elif option == "defend" or option == '2':
+        elif option == "Defend" or option == '2':
             effect.Skill(2, self.player, self.monster, self.battleflow).instant()
             #effect.Potion(self.player, self.monster, self.battleflow).instant()
+        elif option == "Skills" or option == '3':
+            print("What should I cast?")
+            self.playerskillmenu()
 
-        elif option == "skills" or option == '3':
+        elif option == "Inventory" or option == '4':
             pass
-        elif option == "inventory" or option == '4':
+        elif option == "Inspect" or option == '5':
             pass
-        elif option == "inspect" or option == '5':
+        elif option == "Run" or option == '6':
             pass
-        elif option == "run" or option == '6':
-            pass
-        elif option == "help" or option == '7':
+        elif option == "Help" or option == '7':
             pass
         else:
             self.playerturn()
@@ -112,6 +119,31 @@ class Combat:
             self.postfight('W')
         else: #loop back and activate turncount phase
             self.turncount()
+
+    def playerskillmenu(self):
+        print(self.player.equipped_skill_name)
+        option = input(">>>").title()
+        if option in self.player.equipped_skill_name:
+            enough_mana = self.checkmana(option)
+            if enough_mana == True:
+                self.player.mana -= self.manacost
+                skill_id = self.player.equipped_skill_id[self.player.equipped_skill_name.index(option)]
+                effect.Skill(skill_id, self.player, self.monster, self.battleflow).instant()
+            elif enough_mana == False:
+                print("Woops, looks like I don't have enough mana for this spell.")
+                self.playerskillmenu()
+        elif option == "Back":
+            print("back clicked")
+        else:
+            print("Huh, I don't think I've ever learnt that incantation.")
+            self.playerskillmenu()
+
+    def checkmana(self, option):
+        self.manacost = self.player.equipped_skill_manacost[self.player.equipped_skill_name.index(option)]
+        if self.manacost <= self.player.mana:
+            return True
+        elif self.manacost > self.player.mana:
+            return False
 
     def endcheck(self):
         if self.player.health <= 0:

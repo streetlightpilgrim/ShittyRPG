@@ -11,7 +11,8 @@
     "endturnactivation": "FALSE",
     "instant": "self.value = self.initiator.attack - self.bystander.defense\nself.bystander.health -= self.value",
     "persist": "self.bystander.health -= self.value",
-    "deactivation": "pass"
+    "deactivation": "pass",
+    "flavour_text": "It's a normal attack. What do you expect?"
   },
   {
     "id": 2,
@@ -25,21 +26,23 @@
     "endturnactivation": "FALSE",
     "instant": "self.value = self.initiator.defense * 1.5\nself.initiator.defense += self.value",
     "persist": "pass",
-    "deactivation": "self.initiator.defense -= self.value"
+    "deactivation": "self.initiator.defense -= self.value",
+    "flavour_text": "It's a normal defend. What do you expect?"
   },
   {
     "id": 3,
     "name": "Fireball",
     "target": "bystander",
-    "manacost": 0,
+    "manacost": 10,
     "expirycounter": 3,
     "buff": "FALSE",
     "stackable": "TRUE",
     "startturnactivation": "FALSE",
-    "endturnactivation": "FALSE",
-    "instant": "pass",
-    "persist": "pass",
-    "deactivation": "pass"
+    "endturnactivation": "TRUE",
+    "instant": "self.value = (self.initiator.fire_enhance + self.initiator.attack) - self.bystander.defense\nself.bystander.health -= self.value",
+    "persist": "self.bystander.health -= (self.value / 2)",
+    "deactivation": "pass",
+    "flavour_text": "Crispy"
   },
   {
     "id": 4,
@@ -53,6 +56,7 @@
     "endturnactivation": "FALSE",
     "instant": "pass",
     "persist": "pass",
-    "deactivation": "pass"
+    "deactivation": "pass",
+    "flavour_text": "Do something about healing"
   }
 ]

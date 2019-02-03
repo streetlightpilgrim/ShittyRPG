@@ -1,41 +1,34 @@
 from database import Database
 db = Database()
-import pandas as pd
 from battle import Combat
-
 
 class Player: #class to interact with player objects
     def __init__(self, name):
         self.id = 1 #placeholder until save and load function
-        #establish connection with player database
-        self.playerinfofile = pd.read_json(db.PlayerInfoDatabase, orient = 'records', encoding = 'utf-8')
-        self.playerstatfile = pd.read_json(db.PlayerStatDatabase, orient = 'records', encoding = 'utf-8')
-        self.playerskillfile = pd.read_json(db.PlayerSkillDatabase, orient = 'records', encoding = 'utf-8')
-        self.playerinventoryfile = pd.read_json(db.PlayerInventoryDatabase, orient = 'records', encoding = 'utf-8')
-
         #find match for correct player ID.
-        self.match = self.playerinfofile['id'] == self.id
+        self.match = db.PlayerInfoDatabase['id'] == self.id
         #establish key values by pulling from database.
-        self.name = self.playerinfofile['name'][self.match].values[0]
-        #Load player base information
-        self.maxhealth = self.playerstatfile['maxhealth'][self.match].values[0]
-        self.maxmana = self.playerstatfile['maxmana'][self.match].values[0]
-        self.attack = self.playerstatfile['attack'][self.match].values[0]
-        self.defense = self.playerstatfile['defense'][self.match].values[0]
-        self.speed = self.playerstatfile['speed'][self.match].values[0]
-        self.fire_enhance = self.playerstatfile['fire_enhance'][self.match].values[0]
-        self.water_enhance = self.playerstatfile['water_enhance'][self.match].values[0]
-        self.air_enhance = self.playerstatfile['air_enhance'][self.match].values[0]
-        self.earth_enhance = self.playerstatfile['earth_enhance'][self.match].values[0]
-        self.light_enhance = self.playerstatfile['light_enhance'][self.match].values[0]
-        self.dark_enhance = self.playerstatfile['dark_enhance'][self.match].values[0]
-        self.fire_resist = self.playerstatfile['fire_resist'][self.match].values[0]
-        self.water_resist = self.playerstatfile['water_resist'][self.match].values[0]
-        self.air_resist = self.playerstatfile['air_resist'][self.match].values[0]
-        self.earth_resist = self.playerstatfile['earth_resist'][self.match].values[0]
-        self.light_resist = self.playerstatfile['light_resist'][self.match].values[0]
-        self.dark_resist = self.playerstatfile['dark_resist'][self.match].values[0]
-        #self.skill = self.playerstatfile['skill'][self.match].values[0]
+        self.name = db.PlayerInfoDatabase['name'][self.match].values[0]
+        #Load player stat information
+        self.maxhealth = db.PlayerStatDatabase['maxhealth'][self.match].values[0]
+        self.maxmana = db.PlayerStatDatabase['maxmana'][self.match].values[0]
+        self.attack = db.PlayerStatDatabase['attack'][self.match].values[0]
+        self.defense = db.PlayerStatDatabase['defense'][self.match].values[0]
+        self.speed = db.PlayerStatDatabase['speed'][self.match].values[0]
+        self.fire_enhance = db.PlayerStatDatabase['fire_enhance'][self.match].values[0]
+        self.water_enhance = db.PlayerStatDatabase['water_enhance'][self.match].values[0]
+        self.air_enhance = db.PlayerStatDatabase['air_enhance'][self.match].values[0]
+        self.earth_enhance = db.PlayerStatDatabase['earth_enhance'][self.match].values[0]
+        self.light_enhance = db.PlayerStatDatabase['light_enhance'][self.match].values[0]
+        self.dark_enhance = db.PlayerStatDatabase['dark_enhance'][self.match].values[0]
+        self.fire_resist = db.PlayerStatDatabase['fire_resist'][self.match].values[0]
+        self.water_resist = db.PlayerStatDatabase['water_resist'][self.match].values[0]
+        self.air_resist = db.PlayerStatDatabase['air_resist'][self.match].values[0]
+        self.earth_resist = db.PlayerStatDatabase['earth_resist'][self.match].values[0]
+        self.light_resist = db.PlayerStatDatabase['light_resist'][self.match].values[0]
+        self.dark_resist = db.PlayerStatDatabase['dark_resist'][self.match].values[0]
+        #Load player skill information
+        self.equipped_skill_id = db.PlayerSkillDatabase['equipped_skill'][self.match].values[0]
 
     def __repr__(self):
         pass
@@ -49,30 +42,28 @@ class Player: #class to interact with player objects
 class Monster: #class to interact with monster objects
     def __init__(self, name):
         self.name = name
-        #establish connection with monster database
-        self.monsterfile = pd.read_json(db.BestiaryDatabase, orient = 'records', encoding = 'utf-8')
         #returns True for rows that fulfill the criterias and False for others. There should always be one true since monster name is unique
-        self.match = self.monsterfile['name'] == name
+        self.match = db.BestiaryDatabase['name'] == name
         #load monster base information
-        self.maxhealth = self.monsterfile['maxhealth'][self.match].values[0]
-        self.attack = self.monsterfile['attack'][self.match].values[0]
-        self.defense = self.monsterfile['defense'][self.match].values[0]
-        self.speed = self.monsterfile['speed'][self.match].values[0]
-        self.fire_enhance = self.monsterfile['fire_enhance'][self.match].values[0]
-        self.water_enhance = self.monsterfile['water_enhance'][self.match].values[0]
-        self.air_enhance = self.monsterfile['air_enhance'][self.match].values[0]
-        self.earth_enhance = self.monsterfile['earth_enhance'][self.match].values[0]
-        self.light_enhance = self.monsterfile['light_enhance'][self.match].values[0]
-        self.dark_enhance = self.monsterfile['dark_enhance'][self.match].values[0]
-        self.fire_resist = self.monsterfile['fire_resist'][self.match].values[0]
-        self.water_resist = self.monsterfile['water_resist'][self.match].values[0]
-        self.air_resist = self.monsterfile['air_resist'][self.match].values[0]
-        self.earth_resist = self.monsterfile['earth_resist'][self.match].values[0]
-        self.light_resist = self.monsterfile['light_resist'][self.match].values[0]
-        self.dark_resist = self.monsterfile['dark_resist'][self.match].values[0]
-        self.skill = self.monsterfile['skill'][self.match].values[0]
-        self.taunt = self.monsterfile['taunt'][self.match].values[0]
-        self.flavour_text = self.monsterfile['flavour_text'][self.match].values[0]
+        self.maxhealth = db.BestiaryDatabase['maxhealth'][self.match].values[0]
+        self.attack = db.BestiaryDatabase['attack'][self.match].values[0]
+        self.defense = db.BestiaryDatabase['defense'][self.match].values[0]
+        self.speed = db.BestiaryDatabase['speed'][self.match].values[0]
+        self.fire_enhance = db.BestiaryDatabase['fire_enhance'][self.match].values[0]
+        self.water_enhance = db.BestiaryDatabase['water_enhance'][self.match].values[0]
+        self.air_enhance = db.BestiaryDatabase['air_enhance'][self.match].values[0]
+        self.earth_enhance = db.BestiaryDatabase['earth_enhance'][self.match].values[0]
+        self.light_enhance = db.BestiaryDatabase['light_enhance'][self.match].values[0]
+        self.dark_enhance = db.BestiaryDatabase['dark_enhance'][self.match].values[0]
+        self.fire_resist = db.BestiaryDatabase['fire_resist'][self.match].values[0]
+        self.water_resist = db.BestiaryDatabase['water_resist'][self.match].values[0]
+        self.air_resist = db.BestiaryDatabase['air_resist'][self.match].values[0]
+        self.earth_resist = db.BestiaryDatabase['earth_resist'][self.match].values[0]
+        self.light_resist = db.BestiaryDatabase['light_resist'][self.match].values[0]
+        self.dark_resist = db.BestiaryDatabase['dark_resist'][self.match].values[0]
+        self.skill = db.BestiaryDatabase['skill'][self.match].values[0]
+        self.taunt = db.BestiaryDatabase['taunt'][self.match].values[0]
+        self.flavour_text = db.BestiaryDatabase['flavour_text'][self.match].values[0]
     def __repr__(self):
         pass
 
