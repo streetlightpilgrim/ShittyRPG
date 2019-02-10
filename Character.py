@@ -12,6 +12,8 @@ class Player: #class to interact with player objects
         #Load player stat information
         self.maxhealth = db.PlayerStatDatabase['maxhealth'][self.match].values[0]
         self.maxmana = db.PlayerStatDatabase['maxmana'][self.match].values[0]
+        self.health = self.maxhealth
+        self.mana = self.maxmana
         self.attack = db.PlayerStatDatabase['attack'][self.match].values[0]
         self.defense = db.PlayerStatDatabase['defense'][self.match].values[0]
         self.speed = db.PlayerStatDatabase['speed'][self.match].values[0]
@@ -81,4 +83,5 @@ Welcome to my sh1tty RPG
 print("What is your name?")
 name = input(">>>> ")
 PlayerIG = Player(name)
-Combat(PlayerIG, Monster('Goblin Soldier'))
+fight = Combat(PlayerIG, Monster('Goblin Soldier'))
+fight = Combat(PlayerIG, Monster('Goblin Soldier'))

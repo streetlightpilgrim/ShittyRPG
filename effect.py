@@ -32,7 +32,6 @@ class Skill(Effect): #class to interact with skill objects
             self.target = self.bystander
         elif db.SkillDatabase['target'][self.match].values[0] == 'initiator':
             self.target = self.initiator
-        print(self.target.name)
         self.expirycounter = int(db.SkillDatabase['expirycounter'][self.match].values[0])
         self.buff = bool(db.SkillDatabase['buff'][self.match].values[0])
         self.stackable = bool(db.SkillDatabase['stackable'][self.match].values[0])

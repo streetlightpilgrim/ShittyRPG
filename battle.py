@@ -7,10 +7,7 @@ class Combat:
         #transfer Player and Monster class objects to Combat class so it can be referred to dynamically
         self.player = player
         self.monster = monster
-
         #Load player battle exclusive information
-        self.player.health = self.player.maxhealth
-        self.player.mana = self.player.maxmana
         self.player.turncounter = 0
         #Load player skills for quick access
         self.player.equipped_skill_name = []
@@ -36,8 +33,10 @@ class Combat:
 
     def prefight(self):
         #battle intro message
-        print("{T1} VS {T2}".format(T1 = self.player.name, T2 = self.monster.name))
-        print(self.monster.taunt)
+        print("Another worthy opponent approaches. You are dragged to a fight against your will!!!\n")
+        print("{} challenges you to a last man standing match!\n".format(self.monster.name))
+        print("<------BATTLE START------>\n")
+        print("{}: {}\n".format(self.monster.name, self.monster.taunt))
         #activate turncount phase
         self.turncount()
 
@@ -56,7 +55,6 @@ class Combat:
             self.startturn(self.monster)
 
     def startturn(self, initiator):
-        print(self.player.health)
         #check for battle effects on player's turn activation
         self.battleflow.onstartturn(initiator)
 
@@ -74,7 +72,10 @@ class Combat:
             self.monsterturn()
 
     def playerturn(self):
+        print("<------DILEMMA BEGINS------>\n")
+        print("{}: What would be my best option here? Think...think...\n".format(self.player.name))
         #player battle input menu
+        print("<---BATTLE MENU--->")
         print("(1) Attack")
         print("(2) Defend")
         print("(3) Skills")
@@ -83,7 +84,7 @@ class Combat:
         print("(6) Run")
         print("(7) Help")
 
-        option = input(">>>").title()
+        option = input(">>> ").title()
 
         #activate generic attack
         if option == "Attack" or option == '1':
@@ -101,7 +102,8 @@ class Combat:
         elif option == "Inspect" or option == '5':
             pass
         elif option == "Run" or option == '6':
-            pass
+            print("Alright, alright, I'm out of here.")
+            self.postfight('L')
         elif option == "Help" or option == '7':
             pass
         else:
