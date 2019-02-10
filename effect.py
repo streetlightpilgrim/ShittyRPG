@@ -11,15 +11,15 @@ class Effect: #class to interact with effect of skills, attributes and items
 
     def instant(self):
         #instants are activations that happen immediately after casting
-        exec(db.SkillDatabase['instant'][self.match].values[0])
+        pass
 
     def persist(self):
         #persists are activations that happen in a different phase after casting
-        exec(db.SkillDatabase['persist'][self.match].values[0])
+        pass
 
     def deactivation(self):
         #deactivations are activations that happen before the effect class object is deleted from Battleflow
-        exec(db.SkillDatabase['deactivation'][self.match].values[0])
+        pass
 
 class Skill(Effect): #class to interact with skill objects
     def __init__(self, id, initiator, bystander, battleflow):
@@ -41,20 +41,20 @@ class Skill(Effect): #class to interact with skill objects
         self.battleflow.execute(self)
 
     def instant(self):
-        super().instant()
+        exec(db.SkillDatabase['instant'][self.match].values[0])
 
     def persist(self):
-        super().persist()
+        exec(db.SkillDatabase['persist'][self.match].values[0])
 
     def deactivation(self):
-        super().deactivation()
+        exec(db.SkillDatabase['deactivation'][self.match].values[0])
 
-class BattleItem(Effect): #class to interact with inventory objects
-    def __init__(self, name, initiator, bystander, battleflow):
-        super().__init__(name, initiator, bystander, battleflow)
+class Item(Effect): #class to interact with item objects
+    def __init__(self, id, initiator, bystander, battleflow):
+        super().__init__(id, initiator, bystander, battleflow)
         #returns True for rows that fulfill the criterias and False for others. There should always be one true since monster name is unique
-        self.match = db.ItemDatabase['name'] == name
-        #load skill information
+        self.match = db.ItemDatabase['id'] == self.id
+        #load item information
         if db.ItemDatabase['target'][self.match].values[0] == 'bystander':
             self.target = self.bystander
         elif db.ItemDatabase['target'][self.match].values[0] == 'initiator':
@@ -64,6 +64,15 @@ class BattleItem(Effect): #class to interact with inventory objects
         self.stackable = db.ItemDatabase['stackable'][self.match].values[0]
         self.startturnactivation = db.ItemDatabase['startturnactivation'][self.match].values[0]
         self.endturnactivation = db.ItemDatabase['endturnactivation'][self.match].values[0]
+
+    def instant(self):
+        exec(db.ItemDatabase['instant'][self.match].values[0])
+
+    def persist(self):
+        exec(db.ItemDatabase['persist'][self.match].values[0])
+
+    def deactivation(self):
+        exec(db.ItemDatabase['deactivation'][self.match].values[0])
 
 class Battleflow: #class to handle effect activations
     def __init__(self):

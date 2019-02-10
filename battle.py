@@ -7,9 +7,11 @@ class Combat:
         #transfer Player and Monster class objects to Combat class so it can be referred to dynamically
         self.player = player
         self.monster = monster
+
         #Load player battle exclusive information
         self.player.health = self.player.maxhealth
         self.player.mana = self.player.maxmana
+        self.player.turncounter = 0
         #Load player skills for quick access
         self.player.equipped_skill_name = []
         self.player.equipped_skill_manacost = []
@@ -17,10 +19,16 @@ class Combat:
             skillmatch = db.SkillDatabase['id'] == skill
             self.player.equipped_skill_name.append(db.SkillDatabase['name'][skillmatch].values[0])
             self.player.equipped_skill_manacost.append(int(db.SkillDatabase['manacost'][skillmatch].values[0]))
-        self.player.turncounter = 0
+        #Load player items for quick access
+        self.player.equipped_item_name = []
+        for item in self.player.equipped_item_id:
+            itemmatch = db.ItemDatabase['id'] == item
+            self.player.equipped_item_name.append(db.ItemDatabase['name'][itemmatch].values[0])
+
         #Load monster battle exclusive information
         self.monster.health = self.monster.maxhealth
         self.monster.turncounter = 0
+
         #load Battleflow
         self.battleflow = effect.Battleflow()
         #activate prefight phase
@@ -48,14 +56,17 @@ class Combat:
             self.startturn(self.monster)
 
     def startturn(self, initiator):
+        print(self.player.health)
         #check for battle effects on player's turn activation
         self.battleflow.onstartturn(initiator)
+
         #check for battle ending conditions
         self.battleconclusion = self.endcheck()
         if self.battleconclusion == 'L':
             self.postfight('L')
         elif self.battleconclusion == 'W':
             self.postfight('W')
+
         #begin initiator's turn
         elif initiator == self.player:
             self.playerturn()
@@ -71,7 +82,9 @@ class Combat:
         print("(5) Inspect")
         print("(6) Run")
         print("(7) Help")
+
         option = input(">>>").title()
+
         #activate generic attack
         if option == "Attack" or option == '1':
             effect.Skill(1, self.player, self.monster, self.battleflow).instant()
@@ -82,9 +95,9 @@ class Combat:
         elif option == "Skills" or option == '3':
             print("What should I cast?")
             self.playerskillmenu()
-
         elif option == "Inventory" or option == '4':
-            pass
+            print("Stand over there for a second. Just going through my bag")
+            self.playeritemmenu()
         elif option == "Inspect" or option == '5':
             pass
         elif option == "Run" or option == '6':
@@ -93,6 +106,7 @@ class Combat:
             pass
         else:
             self.playerturn()
+
         #check for battle ending conditions
         self.battleconclusion = self.endcheck()
         if self.battleconclusion == 'L':
@@ -104,13 +118,19 @@ class Combat:
 
     def monsterturn(self):
         #check for battle ending conditions
-        self.endcheck()
+        self.battleconclusion = self.endcheck()
+        if self.battleconclusion == 'L':
+            self.postfight('L')
+        elif self.battleconclusion == 'W':
+            self.postfight('W')
+
         #activate endturn phase
         self.endturn(self.monsterturn)
 
     def endturn(self, initiator):
         #check for battle effects on end of turn activation
         self.battleflow.onendturn(initiator)
+
         #check for battle ending conditions
         self.battleconclusion = self.endcheck()
         if self.battleconclusion == 'L':
@@ -121,12 +141,14 @@ class Combat:
             self.turncount()
 
     def playerskillmenu(self):
+        #show available skills for battle
         print(self.player.equipped_skill_name)
         option = input(">>>").title()
         if option in self.player.equipped_skill_name:
-            enough_mana = self.checkmana(option)
+            enough_mana = self.checkmana(option) #check if player has enough mana for skill
             if enough_mana == True:
                 self.player.mana -= self.manacost
+                #activate skill after deducting mana
                 skill_id = self.player.equipped_skill_id[self.player.equipped_skill_name.index(option)]
                 effect.Skill(skill_id, self.player, self.monster, self.battleflow).instant()
             elif enough_mana == False:
@@ -137,6 +159,21 @@ class Combat:
         else:
             print("Huh, I don't think I've ever learnt that incantation.")
             self.playerskillmenu()
+
+    def playeritemmenu(self):
+        #show available skills for battle
+        print(self.player.equipped_item_name)
+        option = input(">>>").title()
+        if option in self.player.equipped_item_name:
+            #activate item after removing from equipped inventory
+            item_id = self.player.equipped_item_id[self.player.equipped_item_name.index(option)]
+            self.player.equipped_item_name.remove(option)
+            effect.Item(item_id, self.player, self.monster, self.battleflow).instant()
+        elif option == "Back":
+            print("back clicked")
+        else:
+            print("Huh, I don't think I've ever learnt that incantation.")
+            self.playeritemmenu()
 
     def checkmana(self, option):
         self.manacost = self.player.equipped_skill_manacost[self.player.equipped_skill_name.index(option)]

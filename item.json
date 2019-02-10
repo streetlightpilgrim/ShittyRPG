@@ -6,15 +6,33 @@
     "buy_value": 0,
     "sellable": false,
     "category": "utility",
-    "description": "This is the currency of the world."
+    "target": "bystander",
+    "expirycounter": 0,
+    "buff": "FALSE",
+    "stackable": "FALSE",
+    "startturnactivation": "FALSE",
+    "endturnactivation": "FALSE",
+    "instant": "pass",
+    "persist": "pass",
+    "deactivation": "pass",
+    "flavour_text": "This is the currency of the world."
   },
   {
     "id": 2,
     "name": "Potion",
     "sell_value": 50,
     "buy_value": 100,
-    "sellable": true,
+    "sellable": "bystander",
     "category": "battle",
-    "description": "An ordinary health potion."
+    "target": "initiator",
+    "expirycounter": 0,
+    "buff": "TRUE",
+    "stackable": "FALSE",
+    "startturnactivation": "FALSE",
+    "endturnactivation": "FALSE",
+    "instant": "self.value = 10\nself.initiator.health = min(self.initiator.maxhealth, self.initiator.health + self.value)",
+    "persist": "pass",
+    "deactivation": "pass",
+    "flavour_text": "A normal potion."
   }
 ]

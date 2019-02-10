@@ -27,8 +27,9 @@ class Player: #class to interact with player objects
         self.earth_resist = db.PlayerStatDatabase['earth_resist'][self.match].values[0]
         self.light_resist = db.PlayerStatDatabase['light_resist'][self.match].values[0]
         self.dark_resist = db.PlayerStatDatabase['dark_resist'][self.match].values[0]
-        #Load player skill information
+        #Load player skill and inventory information
         self.equipped_skill_id = db.PlayerSkillDatabase['equipped_skill'][self.match].values[0]
+        self.equipped_item_id = db.PlayerInventoryDatabase['equipped_item'][self.match].values[0]
 
     def __repr__(self):
         pass
