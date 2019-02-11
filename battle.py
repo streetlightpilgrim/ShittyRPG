@@ -35,7 +35,7 @@ class Combat:
         #battle intro message
         print("Another worthy opponent approaches. You are dragged to a fight against your will!!!\n")
         print("{} challenges you to a last man standing match!\n".format(self.monster.name))
-        print("<------BATTLE START------>\n")
+        print("<++++++|BATTLE START|++++++>\n")
         print("{}: {}\n".format(self.monster.name, self.monster.taunt))
         #activate turncount phase
         self.turncount()
@@ -72,32 +72,35 @@ class Combat:
             self.monsterturn()
 
     def playerturn(self):
-        print("<------DILEMMA BEGINS------>\n")
+        print("<++++++|PLAYER TURN|++++++>\n")
         print("{}: What would be my best option here? Think...think...\n".format(self.player.name))
         #player battle input menu
-        print("<---BATTLE MENU--->")
+        print("---|DILEMMA MENU|---")
         print("(1) Attack")
         print("(2) Defend")
-        print("(3) Skills")
+        print("(3) Witchcraft")
         print("(4) Invetory")
         print("(5) Inspect")
         print("(6) Run")
         print("(7) Help")
+        print("")
 
         option = input(">>> ").title()
+        print("")
 
         #activate generic attack
         if option == "Attack" or option == '1':
+            print("{}: Energy Wave!\n".format(self.player.name))
             effect.Skill(1, self.player, self.monster, self.battleflow).instant()
-        #activate generid defense
+        #activate generic defense
         elif option == "Defend" or option == '2':
+            print("{}: Focus Barrier!\n".format(self.player.name))
             effect.Skill(2, self.player, self.monster, self.battleflow).instant()
-            #effect.Potion(self.player, self.monster, self.battleflow).instant()
-        elif option == "Skills" or option == '3':
-            print("What should I cast?")
+        elif option == "Witchcraft" or option == '3':
+            print("{}: What should I cast?\n".format(self.player.name))
             self.playerskillmenu()
         elif option == "Inventory" or option == '4':
-            print("Stand over there for a second. Just going through my bag")
+            print("{}: Stand over there for a second. Just going through my bag.\n".format(self.player.name))
             self.playeritemmenu()
         elif option == "Inspect" or option == '5':
             pass
@@ -144,8 +147,11 @@ class Combat:
 
     def playerskillmenu(self):
         #show available skills for battle
-        print(self.player.equipped_skill_name)
-        option = input(">>>").title()
+        print("---|WITCHCRAFT SPELLS|---")
+        print(self.player.equipped_skill_name,"\n")
+        option = input(">>> ").title()
+        print("")
+
         if option in self.player.equipped_skill_name:
             enough_mana = self.checkmana(option) #check if player has enough mana for skill
             if enough_mana == True:
@@ -165,7 +171,9 @@ class Combat:
     def playeritemmenu(self):
         #show available skills for battle
         print(self.player.equipped_item_name)
-        option = input(">>>").title()
+        option = input(">>> ").title()
+        print("\n")
+
         if option in self.player.equipped_item_name:
             #activate item after removing from equipped inventory
             item_id = self.player.equipped_item_id[self.player.equipped_item_name.index(option)]
