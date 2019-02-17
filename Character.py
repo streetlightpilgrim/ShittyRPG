@@ -1,3 +1,4 @@
+import os
 from database import Database
 db = Database()
 from battle import Combat
@@ -66,6 +67,7 @@ class Monster: #class to interact with monster objects
         self.dark_resist = db.BestiaryDatabase['dark_resist'][self.match].values[0]
         self.skill = db.BestiaryDatabase['skill'][self.match].values[0]
         self.taunt = db.BestiaryDatabase['taunt'][self.match].values[0]
+        self.final_words = db.BestiaryDatabase['final_words'][self.match].values[0]
         self.flavour_text = db.BestiaryDatabase['flavour_text'][self.match].values[0]
     def __repr__(self):
         pass
@@ -77,6 +79,7 @@ class Monster: #class to interact with monster objects
         pass
 
 #os.system('cls')
+os.system('cls')
 print("""
 Welcome to my sh1tty RPG
 """)

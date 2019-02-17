@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "Attack",
+    "name": "Energy Wave",
     "target": "bystander",
     "manacost": 0,
     "expirycounter": 0,
@@ -9,14 +9,14 @@
     "stackable": "FALSE",
     "startturnactivation": "FALSE",
     "endturnactivation": "FALSE",
-    "instant": "self.value = self.initiator.attack - self.bystander.defense\nself.bystander.health -= self.value",
-    "persist": "self.bystander.health -= self.value",
+    "instant": "self.value = self.initiator.attack - self.bystander.defense\nself.bystander.health -= self.value\nprint(\"A sudden force smites {}.\\n\".format(self.bystander.name))\nprint(\"{} takes {} damage from the impact.\\n\".format(self.bystander.name, self.value))",
+    "persist": "pass",
     "deactivation": "pass",
-    "flavour_text": "It's a normal attack. What do you expect?"
+    "flavour_text": "A shot of powerful pure mana energy."
   },
   {
     "id": 2,
-    "name": "Defend",
+    "name": "Focus Barrier",
     "target": "initiator",
     "manacost": 0,
     "expirycounter": 1,
@@ -24,10 +24,10 @@
     "stackable": "FALSE",
     "startturnactivation": "FALSE",
     "endturnactivation": "FALSE",
-    "instant": "self.value = self.initiator.defense * 1.5\nself.initiator.defense += self.value",
+    "instant": "self.value = self.initiator.defense * 1.5\nself.initiator.defense += self.value\nprint(\"A protective barrier envelopes {}.\\n\".format(self.initiator.name))\nprint(\"{}'s shield will reduce damage taken.\\n\".format(self.initiator.name))",
     "persist": "pass",
-    "deactivation": "self.initiator.defense -= self.value",
-    "flavour_text": "It's a normal defend. What do you expect?"
+    "deactivation": "self.initiator.defense -= self.value\nprint(\"{}'s Focus Barrier has dissipated.\\n\".format(self.initiator.name))",
+    "flavour_text": "A mana shield that protects the caster from harm. Useful during a snowball fight."
   },
   {
     "id": 3,
