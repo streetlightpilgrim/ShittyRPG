@@ -3,12 +3,13 @@ my shit rpg
 this is a shitty rpg
 You can now fight 2 goblins back to back
 
-# Requirements
+# Requirements & setup
 
-To install requirements:
+This will install all requirements, and set up the database.
 
 ```
   $ pip install ./requirements.txt
+  $ python manage.py migrate
 ```
 
 # Set up admin user
