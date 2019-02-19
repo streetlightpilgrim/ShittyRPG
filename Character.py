@@ -78,14 +78,14 @@ class Monster: #class to interact with monster objects
     def __exit__(self):
         pass
 
-#os.system('cls')
-os.system('cls')
-print("""
-Welcome to my sh1tty RPG
-""")
-#print("What is your name?")
-#name = input(">>>> ")
-name = 'placeholder'
-PlayerIG = Player(name)
-fight = Combat(PlayerIG, Monster('Goblin Soldier'))
-fight = Combat(PlayerIG, Monster('Goblin Soldier'))
+def run():
+    os.system('cls')
+    print("""
+    Welcome to my sh1tty RPG
+    """)
+    #print("What is your name?")
+    #name = input(">>>> ")
+    name = 'placeholder'
+    PlayerIG = Player(name)
+    fight = Combat(PlayerIG, Monster('Goblin Soldier'))
+    fight = Combat(PlayerIG, Monster('Goblin Soldier'))
